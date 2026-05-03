@@ -1,0 +1,6 @@
+{
+  "name": "Professional Playwright Framework",
+  "description": "A senior-level automation framework blueprint for SauceDemo using Playwright, TypeScript, and Page Object Model.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
