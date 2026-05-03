@@ -1,4 +1,4 @@
-import { Locator, Page, expect } from '@playwright/test';
+import { Locator, Page, expect, test } from '@playwright/test';
 
 /**
  * Abstract BasePage to provide common functionality and logging
@@ -15,20 +15,24 @@ export abstract class BasePage {
      * Navigates to a specific path under the baseURL
      */
     async navigate(path: string = '') {
-        await this.page.goto(path);
+        await test.step(`Navigating to: ${path}`, async () => {
+            await this.page.goto(path);
+        });
     }
 
     /**
      * Generic wrapper for waiting for an element to be visible
      */
     async waitForElement(locator: Locator) {
-        await expect(locator).toBeVisible();
+        await test.step('Waiting for element visibility', async () => {
+            await expect(locator).toBeVisible();
+        });
     }
 
     /**
-     * Simple console logger for test steps
+     * Protected helper to wrap actions in test steps for better reporting
      */
-    protected logStep(message: string) {
-        console.log(`[PAGE STEP]: ${message}`);
+    protected async step<T>(name: string, body: () => Promise<T>): Promise<T> {
+        return await test.step(name, body);
     }
 }

@@ -9,17 +9,18 @@ export class LoginPage extends BasePage {
 
     constructor(page: Page) {
         super(page);
-        this.usernameInput = page.locator('[data-test="username"]');
-        this.passwordInput = page.locator('[data-test="password"]');
-        this.loginButton = page.locator('[data-test="login-button"]');
-        this.errorMessage = page.locator('[data-test="error"]');
+        this.usernameInput = page.getByTestId('username');
+        this.passwordInput = page.getByTestId('password');
+        this.loginButton = page.getByTestId('login-button');
+        this.errorMessage = page.getByTestId('error');
     }
 
     async login(username: string, password: string) {
-        this.logStep(`Logging in as user: ${username}`);
-        await this.usernameInput.fill(username);
-        await this.passwordInput.fill(password);
-        await this.loginButton.click();
+        await this.step(`Logging in as user: ${username}`, async () => {
+            await this.usernameInput.fill(username);
+            await this.passwordInput.fill(password);
+            await this.loginButton.click();
+        });
     }
 
     async getErrorMessage(): Promise<string> {

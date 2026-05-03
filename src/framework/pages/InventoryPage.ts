@@ -14,10 +14,11 @@ export class InventoryPage extends BasePage {
     }
 
     async addItemToCart(itemName: string) {
-        this.logStep(`Adding item to cart: ${itemName}`);
-        // Find the specific item's add button using textual match or sibling logic
-        const item = this.page.locator('.inventory_item').filter({ hasText: itemName });
-        await item.locator('button').click();
+        await this.step(`Adding item to cart: ${itemName}`, async () => {
+            const item = this.page.locator('.inventory_item').filter({ hasText: itemName });
+            // Use a more specific selector for the "Add to cart" button
+            await item.locator('button[id^="add-to-cart"]').click();
+        });
     }
 
     async getCartBadgeCount(): Promise<number> {
