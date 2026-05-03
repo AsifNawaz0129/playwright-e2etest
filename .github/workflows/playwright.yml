@@ -4,6 +4,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch: # Allows manual trigger to update snapshots
 jobs:
   test:
     timeout-minutes: 60
@@ -29,7 +30,8 @@ jobs:
       run: npx playwright install --with-deps
 
     - name: Run Playwright tests
-      run: npx playwright test
+      # The --update-snapshots flag can be passed via a custom input if desired, 
+      run: npx playwright test ${{ github.event_name == 'workflow_dispatch' && '--update-snapshots' || '' }}
 
     - name: Upload Report
       uses: actions/upload-artifact@v4
