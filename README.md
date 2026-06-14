@@ -1,5 +1,6 @@
 # ⚡  Playwright E2E Automation Framework
 
+[![CI Passing](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge&logo=githubactions&logoColor=white)](#)
 ![Playwright](https://img.shields.io/badge/-playwright-%232EAD33?style=for-the-badge&logo=playwright&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%230074c1.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
@@ -42,3 +43,43 @@ playwright-e2etest/
 ├── playwright.config.ts        # Core Playwright and browser configurations
 ├── tsconfig.json               # TypeScript compiler configuration
 └── package.json                # Node dependencies and execution scripts
+```
+
+---
+
+### 💻 Local Execution
+
+To run the framework locally, ensure you have Node.js 20+ installed.
+
+1. **Install Dependencies:**
+   ```bash
+   npm ci
+   npx playwright install --with-deps
+   ```
+2. **Run Tests in Headless Mode:**
+   ```bash
+   npx playwright test
+   ```
+3. **Run Tests with UI Mode:**
+   ```bash
+   npx playwright test --ui
+   ```
+4. **Debug Tests:**
+   ```bash
+   npx playwright test --debug
+   ```
+
+---
+
+### ⏱️ Advanced Synchronization Patterns
+
+To combat flakiness effectively, this framework utilizes advanced synchronization instead of hardcoded `waitForTimeout` sleeps:
+* **`waitForLoadState('networkidle')`**: Used prior to capturing visual snapshots to ensure all dynamically loaded assets (e.g., images) are fully rendered.
+* **Auto-waiting Locators**: By leaning on `getByRole` and `getByTestId`, Playwright inherently waits for elements to be attached, visible, and actionable before executing actions.
+* **State Verification**: Post-login assertions wait on definitive DOM state changes (`waitForSelector`) to guarantee the application state before proceeding.
+
+---
+
+### 🤖 AI-Assisted Test Engineering Integration
+
+This framework incorporates early support for AI-assisted workflows using `@google/genai` (as provisioned in dependencies). Moving towards autonomous test generation, GenAI can be hooked into Playwright fixtures to automatically map DOM changes to POM updates or dynamically heal broken locators based on test traces.

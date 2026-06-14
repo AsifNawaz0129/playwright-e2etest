@@ -9,6 +9,11 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
     env:
       # Address Node.js 20 deprecation warning
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -31,12 +36,12 @@ jobs:
 
     - name: Run Playwright tests
       # The --update-snapshots flag can be passed via a custom input if desired, 
-      run: npx playwright test ${{ github.event_name == 'workflow_dispatch' && '--update-snapshots' || '' }}
+      run: npx playwright test ${{ github.event_name == 'workflow_dispatch' && '--update-snapshots' || '' }} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
     - name: Upload Report
       uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: playwright-report
+        name: playwright-report-${{ matrix.shardIndex }}
         path: playwright-report/
         retention-days: 30
