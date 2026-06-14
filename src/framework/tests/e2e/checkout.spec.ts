@@ -25,6 +25,9 @@ test.describe('Swag Labs - E2E User Journeys', () => {
     });
 
     test('visual validation of the inventory page', async ({ authenticatedPage }) => {
+        // Wait for all network requests (e.g. images) to finish to ensure a stable screenshot
+        await authenticatedPage.waitForLoadState('networkidle');
+
         // This uses the custom authenticatedPage fixture to skip login steps
         await expect(authenticatedPage).toHaveScreenshot('inventory-page.png', {
             // Mask the footer as it contains dynamic copyright years
