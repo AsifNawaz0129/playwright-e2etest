@@ -13,6 +13,8 @@ dotenv.config();
  */
 export default defineConfig({
   testDir: './src/framework/tests',
+  /* Make visual regression snapshots OS-agnostic so Mac and Linux can share them */
+  snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{projectName}{ext}',
   /* Maximum time one test can run for. */
   timeout: 30 * 1000,
   expect: {
