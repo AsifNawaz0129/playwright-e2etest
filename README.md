@@ -7,7 +7,7 @@
 ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 
 ### 🎯 Overview
-This repository contains a high-grade, scalable End-to-End (E2E) automation framework built with **Playwright** and **TypeScript**, targeting the SauceDemo (Swag Labs) e-commerce platform. It is designed to demonstrate senior-level SDET architecture, focusing on type safety, custom fixture injection, visual regression, and seamless CI/CD integration.
+This repository contains a high-grade, scalable End-to-End (E2E) automation framework built with **Playwright** and **TypeScript**, targeting the SauceDemo (Swag Labs) e-commerce platform. It is designed to demonstrate software testing architecture, focusing on type safety, custom fixture injection, visual regression, and seamless CI/CD integration.
 
 ---
 
