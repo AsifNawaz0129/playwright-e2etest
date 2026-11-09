@@ -1,11 +1,13 @@
 import { test as base, Page } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { InventoryPage } from '../pages/InventoryPage';
+import { TLDrawPage } from '../pages/TLDrawPage';
 
 type MyFixtures = {
     loginPage: LoginPage;
     inventoryPage: InventoryPage;
     authenticatedPage: Page;
+    tlDrawPage: TLDrawPage;
 };
 
 export const test = base.extend<MyFixtures>({
@@ -26,6 +28,9 @@ export const test = base.extend<MyFixtures>({
         // Wait for the inventory container to be visible to ensure login is complete
         await page.waitForSelector('.inventory_list');
         await use(page);
+    },
+    tlDrawPage: async ({ page }, use) => {
+        await use(new TLDrawPage(page));
     },
 });
 

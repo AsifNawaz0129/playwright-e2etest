@@ -1,4 +1,4 @@
-# ⚡  Playwright E2E Automation Framework
+# ⚡ Playwright Enterprise E2E Automation Framework
 
 [![CI Passing](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge&logo=githubactions&logoColor=white)](#)
 ![Playwright](https://img.shields.io/badge/-playwright-%232EAD33?style=for-the-badge&logo=playwright&logoColor=white)
@@ -7,42 +7,54 @@
 ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 
 ### 🎯 Overview
-This repository contains a high-grade, scalable End-to-End (E2E) automation framework built with **Playwright** and **TypeScript**, targeting the SauceDemo (Swag Labs) e-commerce platform. It is designed to demonstrate software testing architecture, focusing on type safety, custom fixture injection, visual regression, and seamless CI/CD integration.
+This repository contains a high-grade, scalable End-to-End (E2E) automation framework built with **Playwright** and **TypeScript**. Designed for real-world enterprise architectures, it demonstrates multi-application testing across both standard e-commerce flows (**SauceDemo**) and modern infinite-canvas graphic applications (**TLDraw**).
+
+---
+
+### 🎨 Featured Showcase: The Hybrid Draw (DOM to Canvas Interaction)
+
+#### Why Design & Canvas Tech Companies (e.g. Kittl, Canva, Figma) Care:
+Modern design tools present unique automation challenges: they feature standard HTML DOM toolbars, menus, and sidebars wrapped around a complex graphic canvas.
+
+A naive automation script often attempts to drive everything via fragile raw coordinates `(x, y)`, which instantly break across viewport changes. This framework demonstrates the **Hybrid Draw Pattern**:
+1. **Accessible DOM Locators:** Uses `page.getByRole()` and semantic locators for tool selection in the DOM toolbar.
+2. **Precision Canvas Gestures:** Transitions to coordinate-based native mouse events (`page.mouse.move()`, `page.mouse.down()`, `page.mouse.up()`) exclusively within the active drawing area.
+3. **DOM-Level Shape Verification:** Asserts newly created canvas elements by querying TLDraw's rendered SVG/HTML nodes (`.tl-shape`, `data-shape-type="geo"`) instead of relying on brittle pixel-matching.
 
 ---
 
 ### 🚀 Core Features & Architecture
 
-* **Design Pattern:** Implements a strict **Page Object Model (POM)** with a `BasePage` abstraction to handle common page interactions, ensuring maximum code reusability.
-* **Dependency Injection:** Utilizes Custom Playwright Fixtures (`base.fixture.ts`) to cleanly manage test setup, teardown, and authentication states without cluttering test files.
-* **Visual Regression Testing:** Integrated snapshot-based testing to detect unintended visual changes across multiple browsers (`Chromium`, `Firefox`, `WebKit`).
-* **Robust Infrastructure:** Configured for parallel execution and cross-browser testing natively through `playwright.config.ts`.
-* **Continuous Integration (CI/CD):** Fully integrated with **GitHub Actions**. The pipeline automatically handles browser binary installation, parallel test execution, and HTML report artifact uploads upon failure.
-* **Environment Management:** Uses `.env` configuration to securely manage test data and environment secrets.
+* **Multi-Domain Architecture:** Single scalable framework cleanly housing test suites across multiple web applications without locator or route collisions.
+* **Page Object Model (POM):** Strict inheritance with `BasePage` providing reusable step logging, auto-waiting abstractions, and error handling.
+* **Dependency Injection via Fixtures:** Extensible Playwright fixtures (`base.fixture.ts`) inject pre-configured page objects (`loginPage`, `inventoryPage`, `tlDrawPage`) and pre-authenticated sessions (`authenticatedPage`).
+* **Visual Regression Testing:** Snapshot-based visual regression across browser rendering engines (`Chromium`, `Firefox`, `WebKit`).
+* **Continuous Integration (CI/CD):** Integrated with **GitHub Actions** with parallel matrix sharding and HTML report artifact generation.
 
 ---
 
 ### 📂 Framework Structure
 
 ```text
-playwright-e2etest/
+playwright-framework/
 ├── .github/workflows/
-│   └── playwright.yml          # CI/CD pipeline configuration (GitHub Actions)
+│   └── playwright.yml              # CI/CD pipeline with sharded test execution
 ├── src/
 │   ├── framework/
 │   │   ├── fixtures/
-│   │   │   └── base.fixture.ts # Custom Playwright Fixtures for Dependency Injection
-│   │   └── pages/
-│   │       ├── BasePage.ts     # POM abstraction layer
-│   │       ├── InventoryPage.ts
-│   │       └── LoginPage.ts
-│   └── tests/e2e/
-│       ├── checkout.spec.ts-snapshots/ # Visual regression baseline images
-│       └── checkout.spec.ts            # Core test specifications
-├── .env.example                # Template for environment variables
-├── playwright.config.ts        # Core Playwright and browser configurations
-├── tsconfig.json               # TypeScript compiler configuration
-└── package.json                # Node dependencies and execution scripts
+│   │   │   └── base.fixture.ts     # Dependency injection for all page objects
+│   │   ├── pages/
+│   │   │   ├── BasePage.ts         # Core POM abstraction layer
+│   │   │   ├── LoginPage.ts        # SauceDemo Authentication POM
+│   │   │   ├── InventoryPage.ts    # SauceDemo Product Catalog POM
+│   │   │   └── TLDrawPage.ts       # TLDraw Canvas & Hybrid Draw POM
+│   │   └── tests/
+│   │       └── e2e/
+│   │           ├── checkout.spec.ts        # SauceDemo E2E & visual validation
+│   │           └── tldraw-canvas.spec.ts   # DOM-to-Canvas hybrid drawing tests
+├── playwright.config.ts            # Playwright cross-browser configuration
+├── tsconfig.json                   # TypeScript compiler configuration
+└── package.json                    # Dependencies and scripts
 ```
 
 ---
@@ -51,35 +63,36 @@ playwright-e2etest/
 
 To run the framework locally, ensure you have Node.js 20+ installed.
 
-1. **Install Dependencies:**
+1. **Install Dependencies & Browsers:**
    ```bash
    npm ci
-   npx playwright install --with-deps
+   npx playwright install chromium
    ```
-2. **Run Tests in Headless Mode:**
+
+2. **Run All E2E Tests:**
    ```bash
-   npx playwright test
+   npx playwright test --project=chromium
    ```
-3. **Run Tests with UI Mode:**
+
+3. **Run Specifically the TLDraw Canvas Test Suite:**
+   ```bash
+   npx playwright test src/framework/tests/e2e/tldraw-canvas.spec.ts --project=chromium
+   ```
+
+4. **Run in UI / Interactive Debug Mode:**
    ```bash
    npx playwright test --ui
    ```
-4. **Debug Tests:**
+
+5. **Type Checking & Linting:**
    ```bash
-   npx playwright test --debug
+   npm run lint
    ```
 
 ---
 
 ### ⏱️ Advanced Synchronization Patterns
 
-To combat flakiness effectively, this framework utilizes advanced synchronization instead of hardcoded `waitForTimeout` sleeps:
-* **`waitForLoadState('networkidle')`**: Used prior to capturing visual snapshots to ensure all dynamically loaded assets (e.g., images) are fully rendered.
-* **Auto-waiting Locators**: By leaning on `getByRole` and `getByTestId`, Playwright inherently waits for elements to be attached, visible, and actionable before executing actions.
-* **State Verification**: Post-login assertions wait on definitive DOM state changes (`waitForSelector`) to guarantee the application state before proceeding.
-
----
-
-### 🤖 AI-Assisted Test Engineering Integration
-
-This framework incorporates early support for AI-assisted workflows using `@google/genai` (as provisioned in dependencies). Moving towards autonomous test generation, GenAI can be hooked into Playwright fixtures to automatically map DOM changes to POM updates or dynamically heal broken locators based on test traces.
+* **Auto-waiting Locators:** Relies on Playwright's actionability checks with `getByRole()` and `locator()` to eliminate arbitrary sleeps.
+* **Network & DOM Idle Waits:** Waits for canvas initialization and network asset loading before capturing snapshots or initiating gestures.
+* **Resilient Drag-and-Drop Interpolation:** Simulates human-like drawing using segmented mouse interpolation steps (`{ steps: 10 }`) to ensure canvas event listeners capture drag trajectories.
