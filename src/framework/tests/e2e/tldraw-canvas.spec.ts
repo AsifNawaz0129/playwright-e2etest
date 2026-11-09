@@ -19,7 +19,7 @@ import { test, expect } from '../../fixtures/base.fixture';
  */
 test.describe('TLDraw - Hybrid Canvas Automation', () => {
 
-    test('The Hybrid Draw: should select Rectangle tool via DOM and draw shape onto canvas', async ({ tlDrawPage, page }, testInfo) => {
+    test('The Hybrid Draw: should select Rectangle tool via DOM and draw shape onto canvas', async ({ tlDrawPage }) => {
         // Step 1: Navigate to TLDraw and wait for canvas surface readiness
         await tlDrawPage.navigateToTLDraw();
 
@@ -43,15 +43,9 @@ test.describe('TLDraw - Hybrid Canvas Automation', () => {
         // Validate shape type attribute rendered by TLDraw
         const shapeType = await shapes.first().getAttribute('data-shape-type');
         expect(shapeType).toBe('geo');
-
-        // Attach a full-fidelity visual screenshot to the Playwright report and UI mode
-        await testInfo.attach('tldraw-canvas-with-rectangle', {
-            body: await page.screenshot(),
-            contentType: 'image/png',
-        });
     });
 
-    test('should insert and verify text inside a drawn shape (In-Place Canvas Text Editing)', async ({ tlDrawPage, page }, testInfo) => {
+    test('should insert and verify text inside a drawn shape (In-Place Canvas Text Editing)', async ({ tlDrawPage }) => {
         await tlDrawPage.navigateToTLDraw();
 
         // Draw a rectangle
@@ -66,14 +60,9 @@ test.describe('TLDraw - Hybrid Canvas Automation', () => {
         // Assert that the text content rendered inside the SVG/DOM node matches
         const renderedText = await tlDrawPage.getShapeText(0);
         expect(renderedText).toBe(sampleText);
-
-        await testInfo.attach('canvas-with-text-shape', {
-            body: await page.screenshot(),
-            contentType: 'image/png',
-        });
     });
 
-    test('should support canvas state operations: shape deletion and undo', async ({ tlDrawPage, page }, testInfo) => {
+    test('should support canvas state operations: shape deletion and undo', async ({ tlDrawPage }) => {
         await tlDrawPage.navigateToTLDraw();
 
         // Draw a shape
@@ -88,10 +77,5 @@ test.describe('TLDraw - Hybrid Canvas Automation', () => {
         // Restore shape using keyboard Undo
         await tlDrawPage.undo();
         await expect(tlDrawPage.getShapesLocator()).toHaveCount(1);
-
-        await testInfo.attach('canvas-restored-shape-after-undo', {
-            body: await page.screenshot(),
-            contentType: 'image/png',
-        });
     });
 });
